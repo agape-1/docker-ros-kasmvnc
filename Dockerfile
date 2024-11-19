@@ -8,7 +8,6 @@ ENV PYTHONWARNINGS="ignore:setup.py install is deprecated::setuptools.command.in
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-
 # update base system
 RUN apt-get update && apt-get upgrade -y --no-install-recommends
 
@@ -32,6 +31,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	ros-${ROS_DISTRO}-slam-toolbox \
 	ros-${ROS_DISTRO}-teleop-twist-keyboard \
 	ros-${ROS_DISTRO}-xacro \
+	&& rm -rf /var/lib/apt/lists/*
+
+# install packages for dynamic websocket configuration
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	xmlstarlet
 	&& rm -rf /var/lib/apt/lists/*
 
 # ros 2 env
@@ -66,4 +70,15 @@ RUN mkdir -p ${COLCON_WS_SRC}\
     && . /opt/ros/${ROS_DISTRO}/setup.sh\
     && colcon build
 
-CMD ["gz" ,"sim", "-s", "--headless-rendering"]
+ARG ENTRYPOINT=docker-entrypoint.sh
+ARG WEBSOCKET_GZLAUNCH_FILE=websocket.gzlaunch
+ARG GZ_SIM_OPTIONS=-s --headless-rendering
+ARG WEBSOCKET_PORT=9002
+
+COPY ${ENTRYPOINT} ${WEBSOCKET_GZLAUNCH_FILE} ./
+
+RUN chmod +x ./${ENTRYPOINT} && xmlstarlet edit -L --update "//port" --value ${WEBSOCKET_PORT} ${WEBSOCKET_GZLAUNCH_FILE}
+
+EXPOSE ${WEBSOCKET_PORT}
+
+ENTRYPOINT ./${ENTRYPOINT} ${GZ_SIM_OPTIONS} ${WEBSOCKET_GZLAUNCH_FILE}
