@@ -1,37 +1,63 @@
-# Copied from https://github.com/brean/gz-sim-docker/blob/main/Dockerfile
+# Modified from https://github.com/brean/gz-sim-docker/blob/main/Dockerfile https://github.com/UNF-Robotics/docker-ros2-jazzy/blob/master/Dockerfile
 # TODO: Integrate gzweb
-ARG ROS_DISTRO
-FROM ros:${ROS_DISTRO}
-
-ENV COLCON_WS=/root/colcon_ws
-ENV COLCON_WS_SRC=/root/colcon_ws/src
+ARG ROS_DISTRO=jazzy
+FROM ros:${ROS_DISTRO}-ros-core-noble
+ENV COLCON_WS=/opt/ros_ws
+ENV COLCON_WS_SRC=/opt/ros_ws/src
 ENV PYTHONWARNINGS="ignore:setup.py install is deprecated::setuptools.command.install"
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
-# see https://gazebosim.org/docs/harmonic/install_ubuntu
-ARG GZ_VERSION
 
-RUN apt-get update -qq \
-    && apt-get install -y \
-        wget \
-    && rm -rf /var/lib/apt/lists/*
+# update base system
+RUN apt-get update && apt-get upgrade -y --no-install-recommends
+
+# install ros2 packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	libusb-1.0-0-dev \
+	python3-colcon-devtools \
+	python3-colcon-package-selection \
+	python3-colcon-ros \
+	ros-dev-tools \
+	ros-${ROS_DISTRO}-ament-lint-auto \
+	ros-${ROS_DISTRO}-controller-manager \
+	ros-${ROS_DISTRO}-joint-limits \
+	ros-${ROS_DISTRO}-joint-state-publisher \
+	ros-${ROS_DISTRO}-joy-linux \
+	ros-${ROS_DISTRO}-joy-teleop \
+	ros-${ROS_DISTRO}-robot-state-publisher \
+	ros-${ROS_DISTRO}-ros2-controllers \
+	ros-${ROS_DISTRO}-ros2launch \
+	ros-${ROS_DISTRO}-rplidar-ros \
+	ros-${ROS_DISTRO}-slam-toolbox \
+	ros-${ROS_DISTRO}-teleop-twist-keyboard \
+	ros-${ROS_DISTRO}-xacro \
+	&& rm -rf /var/lib/apt/lists/*
+
+# ros 2 env
+RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /root/.bashrc
+RUN echo "[[ -d /opt/ros_ws/install ]] && source /opt/ros_ws/install/setup.sh" \
+	>> /root/.bashrc
+
+# ros 2 workspace
+RUN mkdir -p /opt/ros_ws/src
+
+# common commands added to history
+RUN echo "ros2 run teleop_twist_keyboard teleop_twist_keyboard" \
+        >> /root/.bash_history
+RUN echo "source /opt/ros_ws/install/setup.sh" \
+        >> /root/.bash_history
+RUN echo "cd /opt/ros_ws" \
+        >> /root/.bash_history
 
 RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg\
-    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+
+ARG GZ_VERSION=harmonic
 
 RUN apt-get update -qq \
     && apt-get install -y \
         gz-${GZ_VERSION} \
-        build-essential\
-        ros-${ROS_DISTRO}-rcl-interfaces\
-        ros-${ROS_DISTRO}-rclcpp\
-        ros-${ROS_DISTRO}-builtin-interfaces\
-        ros-${ROS_DISTRO}-ros-gz\
-        ros-${ROS_DISTRO}-sdformat-urdf\
-        ros-${ROS_DISTRO}-vision-msgs\
-        ros-${ROS_DISTRO}-actuator-msgs\
-        ros-${ROS_DISTRO}-image-transport\
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p ${COLCON_WS_SRC}\
@@ -39,4 +65,4 @@ RUN mkdir -p ${COLCON_WS_SRC}\
     && . /opt/ros/${ROS_DISTRO}/setup.sh\
     && colcon build
 
-CMD gz sim
+CMD ["gz" ,"sim", "-s", "--headless-rendering"]
