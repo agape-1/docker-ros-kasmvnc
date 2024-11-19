@@ -6,8 +6,11 @@ services:
       context: ./
       dockerfile: ./Dockerfile
       args:
-        ROS_DISTRO: jazzy
-        GZ_VERSION: harmonic
+        ROS_DISTRO: ${ROS_DISTRO}
+        GZ_VERSION: ${GZ_VERSION}
+        WEBSOCKET_PORT: ${WEBSOCKET_PORT}
+    ports:
+      - ${WEBSOCKET_PORT}
     runtime: nvidia
     environment: 
       - PYTHONUNBUFFERED=1 # important to show error messages if a ros service crashes!
