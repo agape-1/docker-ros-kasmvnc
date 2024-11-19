@@ -1,0 +1,25 @@
+# Modified frm # Modified from https://github.com/brean/gz-sim-docker/blob/main/docker-compose.yml
+services:
+  gz_sim:
+    # gazebo installation for the robot
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+      args:
+        ROS_DISTRO: jazzy
+        GZ_VERSION: harmonic
+    runtime: nvidia
+    environment: 
+      - PYTHONUNBUFFERED=1 # important to show error messages if a ros service crashes!
+      - NVIDIA_VISIBLE_DEVICES=all # for docker-nvidia2
+      - NVIDIA_DRIVER_CAPABILITIES=all # for docker-nvidia2
+      - XDG_RUNTIME_DIR 
+      - __NV_PRIME_RENDER_OFFLOAD=1
+      - __GLX_VENDOR_LIBRARY_NAME=nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
