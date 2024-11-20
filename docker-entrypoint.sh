@@ -14,6 +14,8 @@ WEBSOCKET_GZLAUNCH_FILE="$2"
 # Start the first process
 gz sim $GZ_SIM_OPTIONS &
 
+xmlstarlet edit -L --update "//port" --value $WEBSOCKET_PORT $WEBSOCKET_GZLAUNCH_FILE
+
 # Start the second process
 gz-launch $WEBSOCKET_GZLAUNCH_FILE &
 
