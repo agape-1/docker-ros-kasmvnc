@@ -71,6 +71,8 @@ RUN mkdir -p ${COLCON_WS_SRC}\
     && colcon build
 
 ARG ENTRYPOINT=docker-entrypoint.sh
+# Fix: Allow `${ENTRYPOINT}` var accessible in `ENTRYPOINT` layer
+ENV ENTRYPOINT $ENTRYPOINT
 ENV WEBSOCKET_GZLAUNCH_FILE websocket.gzlaunch
 ENV GZ_SIM_OPTIONS -s --headless-rendering
 ENV WEBSOCKET_PORT 9002
@@ -81,4 +83,4 @@ RUN chmod +x ./${ENTRYPOINT}
 
 EXPOSE ${WEBSOCKET_PORT}
 
-ENTRYPOINT ./${ENTRYPOINT} ${GZ_SIM_OPTIONS} ${WEBSOCKET_PORT}
+ENTRYPOINT ./${ENTRYPOINT} --gz-sim-options="${GZ_SIM_OPTIONS}" --websocket-port="${WEBSOCKET_PORT}"
