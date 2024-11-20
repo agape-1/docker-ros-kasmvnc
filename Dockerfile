@@ -35,7 +35,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # install packages for dynamic websocket configuration
 RUN apt-get update && apt-get install -y --no-install-recommends \
-	xmlstarlet
+	xmlstarlet \
 	&& rm -rf /var/lib/apt/lists/*
 
 # ros 2 env
