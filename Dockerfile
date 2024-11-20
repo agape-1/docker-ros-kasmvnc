@@ -71,9 +71,9 @@ RUN mkdir -p ${COLCON_WS_SRC}\
     && colcon build
 
 ARG ENTRYPOINT=docker-entrypoint.sh
-ARG WEBSOCKET_GZLAUNCH_FILE=websocket.gzlaunch
-ARG GZ_SIM_OPTIONS=-s --headless-rendering
-ARG WEBSOCKET_PORT=9002
+ENV WEBSOCKET_GZLAUNCH_FILE websocket.gzlaunch
+ENV GZ_SIM_OPTIONS -s --headless-rendering
+ENV WEBSOCKET_PORT 9002
 
 COPY ${ENTRYPOINT} ${WEBSOCKET_GZLAUNCH_FILE} ./
 
