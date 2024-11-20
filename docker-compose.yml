@@ -13,6 +13,7 @@ services:
     ports:
       - ${WEBSOCKET_PORT}
     runtime: nvidia
+    env_file: "./.env"
     environment: 
       - PYTHONUNBUFFERED=1 # important to show error messages if a ros service crashes!
       - NVIDIA_VISIBLE_DEVICES=all # for docker-nvidia2
