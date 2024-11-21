@@ -83,4 +83,4 @@ RUN chmod +x ./${ENTRYPOINT}
 
 EXPOSE ${WEBSOCKET_PORT}
 
-ENTRYPOINT ./${ENTRYPOINT} --gz-sim-options="${GZ_SIM_OPTIONS}" --websocket-port="${WEBSOCKET_PORT}"
+ENTRYPOINT /bin/bash ./${ENTRYPOINT} --gz-sim-options="${GZ_SIM_OPTIONS}" --websocket-port="${WEBSOCKET_PORT}"
