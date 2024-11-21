@@ -1,7 +1,7 @@
 # Modified from https://github.com/brean/gz-sim-docker/blob/main/Dockerfile https://github.com/UNF-Robotics/docker-ros2-jazzy/blob/master/Dockerfile
 # TODO: Integrate gzweb
 ARG ROS_DISTRO=jazzy
-FROM ros:${ROS_DISTRO}-ros-core-noble
+FROM ros:${ROS_DISTRO}-ros-core
 ENV COLCON_WS=/opt/ros_ws
 ENV COLCON_WS_SRC=/opt/ros_ws/src
 ENV PYTHONWARNINGS="ignore:setup.py install is deprecated::setuptools.command.install"
