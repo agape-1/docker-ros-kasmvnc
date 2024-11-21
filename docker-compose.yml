@@ -2,23 +2,28 @@
 services:
   gz_sim:
     # gazebo installation for the robot
-    build:
+    build: &build
       context: ./
       dockerfile: ./Dockerfile
       args:
         ROS_DISTRO: ${ROS_DISTRO}
         GZ_VERSION: ${GZ_VERSION}
-    ports:
-      - ${WEBSOCKET_PORT}
-    runtime: nvidia
-    env_file: "./.env"
-    environment: 
+    ports: &ports
+      - ${WEBSOCKET_PORT}:${WEBSOCKET_PORT}
+    env_file: &env_file "./.env" 
+    environment: &environment
       - PYTHONUNBUFFERED=1 # important to show error messages if a ros service crashes!
       - NVIDIA_VISIBLE_DEVICES=all # for docker-nvidia2
       - NVIDIA_DRIVER_CAPABILITIES=all # for docker-nvidia2
       - XDG_RUNTIME_DIR 
       - __NV_PRIME_RENDER_OFFLOAD=1
       - __GLX_VENDOR_LIBRARY_NAME=nvidia
+  gz_sim_nvidia:
+    build: *build
+    ports: *ports
+    env_file: *env_file
+    environment: *environment
+    runtime: nvidia
     deploy:
       resources:
         reservations:
