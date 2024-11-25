@@ -9,20 +9,27 @@ services:
         ROS_DISTRO: ${ROS_DISTRO}
         GZ_VERSION: ${GZ_VERSION}
     ports: &ports
+      - ${VNC_PORT}:3000
       - ${WEBSOCKET_PORT}:${WEBSOCKET_PORT}
     env_file: &env_file "./.env" 
+    security_opt:
+      - seccomp:unconfined
+    shm_size: "512m"
     environment: &environment
-      - PYTHONUNBUFFERED=1 # important to show error messages if a ros service crashes!
-      - NVIDIA_VISIBLE_DEVICES=all # for docker-nvidia2
-      - NVIDIA_DRIVER_CAPABILITIES=all # for docker-nvidia2
-      - XDG_RUNTIME_DIR 
-      - __NV_PRIME_RENDER_OFFLOAD=1
-      - __GLX_VENDOR_LIBRARY_NAME=nvidia
+      PYTHONUNBUFFERED : 1 # important to show error messages if a ros service crashes!
+      XDG_RUNTIME_DIR:
+      PUID: 1000
+      PGID: 1000
   gz_sim_nvidia:
     build: *build
     ports: *ports
     env_file: *env_file
-    environment: *environment
+    environment: 
+      <<: *environment
+      NVIDIA_VISIBLE_DEVICES: all # for docker-nvidia2
+      NVIDIA_DRIVER_CAPABILITIES: all # for docker-nvidia2
+      __NV_PRIME_RENDER_OFFLOAD: 1
+      __GLX_VENDOR_LIBRARY_NAME: nvidia
     runtime: nvidia
     deploy:
       resources:
