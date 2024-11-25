@@ -1,7 +1,21 @@
-# Modified from https://github.com/brean/gz-sim-docker/blob/main/Dockerfile https://github.com/UNF-Robotics/docker-ros2-jazzy/blob/master/Dockerfile
-# TODO: Integrate gzweb
-ARG ROS_DISTRO=jazzy
-FROM ros:${ROS_DISTRO}-ros-core
+# Modified from https://github.com/brean/gz-sim-docker/blob/main/Dockerfile https://github.com/UNF-Robotics/docker-ros2-jazzy/blob/master/Dockerfile https://github.com/Tiryoh/docker-ros2-desktop-vnc/blob/master/humble/Dockerfile
+FROM ghcr.io/linuxserver/baseimage-kasmvnc:ubuntujammy
+
+ARG ROS_DISTRO=humble
+RUN apt-get update -q && \
+    apt-get install -y curl gnupg2 lsb-release && \
+    curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null && \
+    apt-get update -q && \
+    apt-get install -y ros-${ROS_DISTRO}-ros-base \
+    python3-argcomplete \
+    python3-colcon-common-extensions \
+    python3-rosdep python3-vcstool && \
+    rosdep init && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN rosdep update
+
 ENV COLCON_WS=/opt/ros_ws
 ENV COLCON_WS_SRC=/opt/ros_ws/src
 ENV PYTHONWARNINGS="ignore:setup.py install is deprecated::setuptools.command.install"
@@ -77,10 +91,8 @@ ENV WEBSOCKET_GZLAUNCH_FILE websocket.gzlaunch
 ENV GZ_SIM_OPTIONS -s --headless-rendering
 ENV WEBSOCKET_PORT 9002
 
-COPY ${ENTRYPOINT} ${WEBSOCKET_GZLAUNCH_FILE} ./
+COPY ${ENTRYPOINT} ${WEBSOCKET_GZLAUNCH_FILE} /
 
-RUN chmod +x ./${ENTRYPOINT}
+RUN chmod +x /${ENTRYPOINT}
 
 EXPOSE ${WEBSOCKET_PORT}
-
-ENTRYPOINT /bin/bash ./${ENTRYPOINT} --gz-sim-options="${GZ_SIM_OPTIONS}" --websocket-port="${WEBSOCKET_PORT}"
