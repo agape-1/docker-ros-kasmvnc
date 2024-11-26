@@ -14,7 +14,7 @@ services:
     env_file: &env_file "./.env" 
     security_opt:
       - seccomp:unconfined
-    shm_size: "512m"
+    shm_size: &shm_size "512m"
     environment: &environment
       PYTHONUNBUFFERED : 1 # important to show error messages if a ros service crashes!
       XDG_RUNTIME_DIR:
@@ -24,6 +24,7 @@ services:
     build: *build
     ports: *ports
     env_file: *env_file
+    shm_size: *shm_size
     environment: 
       <<: *environment
       NVIDIA_VISIBLE_DEVICES: all # for docker-nvidia2
