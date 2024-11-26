@@ -71,3 +71,7 @@ docker compose up gz_sim --force-recreate --build
 ```
 
 where `$DOCKER_ID` is the previously composed Docker container ID, if any.
+
+#### Entrypoint
+
+For compatibility purposes, the entrypoint has been placed in the [`autostart`](/root/defaults/autostart) file. Do not attempt to manually place a `ENTRYPOINT`layer in the [`Dockerfile`](/Dockerfile) to avoid VNC initialization failures.
