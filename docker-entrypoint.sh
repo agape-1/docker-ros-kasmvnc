@@ -3,11 +3,11 @@
 
 # Help function
 function show_help() {
-    echo "Usage: ./docker-entrypoint.sh [--gz-sim-options=<value>] [--websocket-port=<value>]"
-    echo "Example: ./docker-entrypoint.sh --gz-sim-options=\"-s --render\" --websocket-port=8080"
+    echo "Usage: ./docker-entrypoint.sh [--websocket-gzlaunch-file=<value>] [--websocket-port=<value>]"
+    echo "Example: ./docker-entrypoint.sh --websocket-gzlaunch-file=\"/websocket.gzlaunch\" --websocket-port=8080"
     echo
     echo "Arguments:"
-    echo "  --gz-sim-options   Gazebo simulation options (default: \"$GZ_SIM_OPTIONS\")"
+    echo "  --websocket-gzlaunch-file   Gazebo simulation options (default: \"$WEBSOCKET_GZLAUNCH_FILE\")"
     echo "  --websocket-port   Port for the websocket (default: \"$WEBSOCKET_PORT\")"
 }
 
@@ -21,8 +21,8 @@ function show_error_and_exit() {
 # Parse arguments
 for arg in "$@"; do
     case $arg in
-        --gz-sim-options=*)
-            GZ_SIM_OPTIONS="${arg#*=}"
+        --websocket-gzlaunch-file=*)
+            WEBSOCKET_GZLAUNCH_FILE="${arg#*=}"
             ;;
         --websocket-port=*)
             WEBSOCKET_PORT="${arg#*=}"
@@ -37,19 +37,17 @@ for arg in "$@"; do
     esac
 done
 
-# Start the first process
-gz sim $GZ_SIM_OPTIONS &
-
+# Dynamically assign the websocket port
 xmlstarlet edit -L --update "//port" --value $WEBSOCKET_PORT $WEBSOCKET_GZLAUNCH_FILE #Assumes $WEBSOCKET_GZLAUNCH_FILE is a defined env variable 
 
-# Start the second process
+# Start websocket server in background
 gz launch $WEBSOCKET_GZLAUNCH_FILE &
+
+# Launch Gazebo Simulation
+gz sim ${GZ_SIM_OPTIONS}
 
 # Wait for any process to exit
 wait -n
 
-# Exit with status of the process that exited first
+# Exit with status of process that exited first
 exit $?
-
-
-
