@@ -43,8 +43,17 @@ xmlstarlet edit -L --update "//port" --value $WEBSOCKET_PORT $WEBSOCKET_GZLAUNCH
 # Start websocket server in background
 gz launch $WEBSOCKET_GZLAUNCH_PATH &
 
+echo "
+Gazebo Simulation is now ready.
+
+Run Gazebo in the browser: http://localhost:$VNC_PORT
+
+To run the Gazebo visualization tool, go to https://app.gazebosim.org/visualization and connect with the following Websocket URL:
+ws://localhost:$WEBSOCKET_PORT
+"
+
 # Launch Gazebo Simulation
-gz sim ${GZ_SIM_OPTIONS}
+gz sim $GZ_SIM_OPTIONS
 
 # Wait for any process to exit
 wait -n
