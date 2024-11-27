@@ -1,7 +1,12 @@
 # Modified from https://github.com/brean/gz-sim-docker/blob/main/Dockerfile https://github.com/UNF-Robotics/docker-ros2-jazzy/blob/master/Dockerfile https://github.com/Tiryoh/docker-ros2-desktop-vnc/blob/master/humble/Dockerfile
 FROM ghcr.io/linuxserver/baseimage-kasmvnc:ubuntujammy
-
 ARG ROS_DISTRO=humble
+
+# install packages for dynamic websocket configuration
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	dos2unix \
+	&& rm -rf /var/lib/apt/lists/*
+
 RUN apt-get update -q && \
     apt-get install -y curl gnupg2 lsb-release && \
     curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
@@ -47,9 +52,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	ros-${ROS_DISTRO}-xacro \
 	&& rm -rf /var/lib/apt/lists/*
 
-# install packages for dynamic websocket configuration
+# install packages for dynamic websocket configuration and Windows compatibility helper
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	xmlstarlet \
+	dos2unix \ 
 	&& rm -rf /var/lib/apt/lists/*
 
 # ros 2 env
@@ -99,6 +105,7 @@ COPY ${ENTRYPOINT} /
 COPY ${WEBSOCKET_GZLAUNCH_FILE} ${WEBSOCKET_GZLAUNCH_PATH}
 
 RUN chown ${PUID}:${GUID} ${WEBSOCKET_GZLAUNCH_PATH} \
+	&& dos2unix /${ENTRYPOINT} \
 	&& chmod +x /${ENTRYPOINT}
 	
 COPY /root /
