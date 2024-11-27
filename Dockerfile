@@ -2,11 +2,6 @@
 FROM ghcr.io/linuxserver/baseimage-kasmvnc:ubuntujammy
 ARG ROS_DISTRO=humble
 
-# install packages for dynamic websocket configuration
-RUN apt-get update && apt-get install -y --no-install-recommends \
-	dos2unix \
-	&& rm -rf /var/lib/apt/lists/*
-
 RUN apt-get update -q && \
     apt-get install -y curl gnupg2 lsb-release && \
     curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
