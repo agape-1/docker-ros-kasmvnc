@@ -1,0 +1,1 @@
+bash /${ENTRYPOINT} --websocket-gzlaunch-path="/${WEBSOCKET_GZLAUNCH_PATH}" --websocket-port="${WEBSOCKET_PORT}"
