@@ -1,4 +1,6 @@
-## Simulation
+## docker-ros2-kasmvnc
+
+Run ROS2 and Gazebo using [KasmVNC](https://github.com/linuxserver/docker-baseimage-kasmvnc).
 
 ### Requirements
 
