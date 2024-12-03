@@ -75,3 +75,9 @@ where `$DOCKER_ID` is the previously composed Docker container ID, if any.
 #### Entrypoint
 
 For compatibility purposes, the entrypoint has been placed in the [`autostart`](/root/defaults/autostart) file. Do not attempt to manually place a `ENTRYPOINT`layer in the [`Dockerfile`](/Dockerfile) to avoid VNC initialization failures.
+
+### Acknowledgements and Related Projects
+
+* Run Gazebo and ROS through X11 - https://github.com/brean/gz-sim-docker/
+* Minimium Docker ROS2 build for Jazzy - https://github.com/UNF-Robotics/docker-ros2-jazzy/ 
+* Run ROS2 Desktop using noVNC - https://github.com/Tiryoh/docker-ros2-desktop-vnc/
