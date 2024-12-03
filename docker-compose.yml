@@ -1,4 +1,4 @@
-# Modified frm # Modified from https://github.com/brean/gz-sim-docker/blob/main/docker-compose.yml
+# Modified from https://github.com/brean/gz-sim-docker/blob/main/docker-compose.yml
 services:
   gz_sim:
     # gazebo installation for the robot
