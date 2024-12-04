@@ -1,5 +1,6 @@
 # Modified from https://github.com/brean/gz-sim-docker/blob/main/Dockerfile https://github.com/UNF-Robotics/docker-ros2-jazzy/blob/master/Dockerfile https://github.com/Tiryoh/docker-ros2-desktop-vnc/blob/master/humble/Dockerfile
-FROM ghcr.io/linuxserver/baseimage-kasmvnc:ubuntujammy
+ARG UBUNTU_DISTRO=jammy
+FROM ghcr.io/linuxserver/baseimage-kasmvnc:ubuntu${UBUNTU_DISTRO}
 ARG ROS_DISTRO=humble
 
 RUN apt-get update -q && \

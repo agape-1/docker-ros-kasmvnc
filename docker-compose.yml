@@ -6,6 +6,7 @@ services:
       context: ./
       dockerfile: ./Dockerfile
       args:
+        UBUNTU_DISTRO: ${UBUNTU_DISTRO}
         ROS_DISTRO: ${ROS_DISTRO}
         GZ_VERSION: ${GZ_VERSION}
     ports: &ports
