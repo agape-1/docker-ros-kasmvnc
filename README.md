@@ -22,7 +22,7 @@ If you have Docker Nvidia support, run this command instead:
 docker compose up gz_sim_nvidia
 ```
 
-Visit http://loclahost:3000 or `http://localhost:$VNC_PORT` to access the Gazebo GUI.
+Visit http://localhost:3000 or `http://localhost:$VNC_PORT` to access the Gazebo GUI.
 
 This simulation also supports Gazebo's [visualization](https://app.gazebosim.org/visualization) tool. Access the tool and enter ws://localhost:9002 or `ws://localhost:$WEBSOCKET_PORT` and press 'Connect'.
 
