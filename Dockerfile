@@ -89,7 +89,7 @@ RUN mkdir -p ${COLCON_WS_SRC}\
 ARG ENTRYPOINT=docker-entrypoint.sh
 # Fix: Allow `${ENTRYPOINT}` var accessible in `ENTRYPOINT` layer
 ENV ENTRYPOINT $ENTRYPOINT
-ENV WEBSOCKET_GZLAUNCH_FILE websocket.gzlaunch
+ARG WEBSOCKET_GZLAUNCH_FILE=websocket.gzlaunch
 ENV GZ_SIM_OPTIONS -s --headless-rendering
 ENV WEBSOCKET_PORT 9002
 ENV PUID 1000
