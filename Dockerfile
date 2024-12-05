@@ -48,12 +48,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	ros-${ROS_DISTRO}-xacro \
 	&& rm -rf /var/lib/apt/lists/*
 
-# install packages for dynamic websocket configuration and Windows compatibility helper
-RUN apt-get update && apt-get install -y --no-install-recommends \
-	xmlstarlet \
-	dos2unix \ 
-	&& rm -rf /var/lib/apt/lists/*
-
 # ros 2 env
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /root/.bashrc
 RUN echo "[[ -d /opt/ros_ws/install ]] && source /opt/ros_ws/install/setup.sh" \
@@ -85,6 +79,16 @@ RUN mkdir -p ${COLCON_WS_SRC}\
     && cd ${COLCON_WS}\
     && . /opt/ros/${ROS_DISTRO}/setup.sh\
     && colcon build
+
+# install packages for the following:
+# dynamic websocket configuration
+# Windows compatibility helper
+# py-XDG fix: https://github.com/gfjardim/docker-containers/issues/51
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	xmlstarlet \
+	dos2unix \
+	python3-xdg \
+	&& rm -rf /var/lib/apt/lists/*
 
 ARG ENTRYPOINT=docker-entrypoint.sh
 # Fix: Allow `${ENTRYPOINT}` var accessible in `ENTRYPOINT` layer
