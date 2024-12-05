@@ -40,8 +40,16 @@ done
 # Dynamically assign the websocket port
 xmlstarlet edit -L --update "//port" --value $WEBSOCKET_PORT $WEBSOCKET_GZLAUNCH_PATH #Assumes $WEBSOCKET_GZLAUNCH_FILE is a defined env variable 
 
+if [ "$GZ_VERSION" = "fortress" ]; then #Assumes $GZ_VERSION is a defined env variable 
+  ws_launch='ign launch'
+  sim_start='ign gazebo'
+else
+  ws_launch='gz launch'
+  sim_start='gz sim'
+fi
+
 # Start websocket server in background
-gz launch $WEBSOCKET_GZLAUNCH_PATH &
+$ws_launch $WEBSOCKET_GZLAUNCH_PATH &
 
 echo "
 Gazebo Simulation is now ready.
@@ -53,7 +61,7 @@ ws://localhost:$WEBSOCKET_PORT
 "
 
 # Launch Gazebo Simulation
-gz sim $GZ_SIM_OPTIONS
+$sim_start $GZ_SIM_OPTIONS
 
 # Wait for any process to exit
 wait -n
