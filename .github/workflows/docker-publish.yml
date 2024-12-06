@@ -51,14 +51,13 @@ on:
         default: 'websocket.gzlaunch'
         required: false
         type: string
-      platforms:
-        description: 'A [target platform(/s)](https://docs.docker.com/engine/reference/commandline/buildx_build/#platform) for build'
-        default: 'linux/amd64, linux/arm64'
+      platform:
+        description: 'A [target platform](https://docs.docker.com/engine/reference/commandline/buildx_build/#platform) for build'
+        default: 'linux/amd64'
         type: choice
         options:
           - linux/amd64
           - linux/arm64
-          - linux/amd64, linux/arm64
         required: false
   
 
@@ -130,7 +129,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: ${{ inputs.platforms }}
+          platforms: ${{ inputs.platform }}
           build-args: |
             UBUNTU_DISTRO=${{ inputs.ubuntu_distro }}
             ROS_DISTRO=${{ inputs.ros_distro }}
