@@ -1,13 +1,8 @@
 name: Default Build Configurations
 
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
 on:
-  #schedule:
-  #  - cron: '39 21 * * *'
+  schedule:
+    - cron: '0 0 * * *' # Automatic nightly builds - most rebuilds will be cached unless an update happens upstream - typically from ROS Rolling
   push:
     branches: [ "release", "develop" ]
     # Publish semver tags as releases.
