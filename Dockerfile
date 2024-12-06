@@ -26,7 +26,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 # update base system
 RUN apt-get update && apt-get upgrade -y --no-install-recommends
 
-# TODO: Remove -m if `ros-rolling-slam-toolbox` is available in ROS index
+# TODO: Remove and replace `$SLAM_TOOLBOX_PKG` with `ros-${ROS_DISTRO}-slam-toolbox` once `ros-rolling-slam-toolbox` is available in ROS index.
+# Defaults to latest available slam-toolbox (jazzy) in ROS repository
+RUN SLAM_TOOLBOX_PKG=$([ '${ROS_DISTRO}' != 'rolling' ] && echo ros-${ROS_DISTRO}-slam-toolbox || echo ros-jazzy-slam-toolbox)
+
 # install ros2 packages
 RUN apt-get update && apt-get install -y -m --no-install-recommends \
 	libusb-1.0-0-dev \
@@ -44,7 +47,7 @@ RUN apt-get update && apt-get install -y -m --no-install-recommends \
 	ros-${ROS_DISTRO}-ros2-controllers \
 	ros-${ROS_DISTRO}-ros2launch \
 	ros-${ROS_DISTRO}-rplidar-ros \
-	ros-${ROS_DISTRO}-slam-toolbox \
+ 	$SLAM_TOOLBOX_PKG  \ 
 	ros-${ROS_DISTRO}-teleop-twist-keyboard \
 	ros-${ROS_DISTRO}-xacro \
 	&& rm -rf /var/lib/apt/lists/*
