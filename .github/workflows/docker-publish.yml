@@ -81,7 +81,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platform: linux/amd64, linux/arm64
+          platform: ${{ inputs.platform }}
           build-args: |
             UBUNTU_DISTRO=${{ inputs.ubuntu_distro }}
             ROS_DISTRO=${{ inputs.ros_distro }}
