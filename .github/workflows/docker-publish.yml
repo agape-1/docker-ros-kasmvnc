@@ -14,6 +14,32 @@ on:
     tags: [ 'v*.*.*' ] 
   pull_request:
     branches: [ "release", "develop" ]
+  workflow_call:
+    inputs:
+      ubuntu_distro:
+        description: 'Specifies the underlying Ubuntu base distribution to use.'
+        default: 'jammy'
+        required: false
+        type: string
+      ros_distro:
+        description: 'Specifies the ROS (Robot Operating System) distribution to use.'
+        default: 'humble'
+        required: false
+        type: string
+      gz_version:
+        description: 'Defines the version of Gazebo to use.'
+        default: 'garden'
+        required: false
+        type: string
+      websocket_gzlaunch_file:
+        description: 'Specifies the Gazebo launch file for WebSocket configuration. Unless you need to configure gz launch, this can be safely ignored.'
+        default: 'websocket.gzlaunch'
+        required: false
+        type: string
+      platform:
+        description: 'A single [target platform](https://docs.docker.com/engine/reference/commandline/buildx_build/#platform) for build. Use matrixes to handle multi-platform runs. Do not attempt multi-platform runs for one single job to ensure cache usage.'
+        default: 'linux/amd64'
+        type: string
   workflow_dispatch:
     inputs:
       ubuntu_distro:
