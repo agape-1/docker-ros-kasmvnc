@@ -14,6 +14,51 @@ on:
     tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ "release", "develop" ]
+  workflow_dispatch:
+    inputs:
+      ubuntu_distro:
+        description: 'Specifies the underlying Ubuntu base distribution to use.'
+        default: 'jammy'
+        required: false
+        type: choice
+        options:
+          - jammy
+          - noble
+      ros_distro:
+        description: 'Specifies the ROS (Robot Operating System) distribution to use.'
+        default: 'humble'
+        required: false
+        type: choice
+        options:
+          - jazzy
+          - iron
+          - humble
+      gz_version:
+        description: 'Defines the version of Gazebo to use.'
+        default: 'garden'
+        required: false
+        type: choice
+        options:
+          - jetty
+          - ionic
+          - harmonic
+          - garden
+          - fortress
+          - citadel
+      websocket_gzlaunch_file:
+        description: 'Specifies the Gazebo launch file for WebSocket configuration. Unless you need to configure gz launch, this can be safely ignored.'
+        default: 'websocket.gzlaunch'
+        required: false
+        type: string
+      platform:
+        description: 'A [target platform](https://docs.docker.com/engine/reference/commandline/buildx_build/#platform) for build'
+        default: 'linux/amd64'
+        type: choice
+        options:
+          - linux/amd64
+          - linux/arm64
+        required: false
+  
 
 env:
   # Use docker.io for Docker Hub if empty
