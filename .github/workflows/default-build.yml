@@ -1,0 +1,45 @@
+name: Default Build Configurations
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+  #schedule:
+  #  - cron: '39 21 * * *'
+  push:
+    branches: [ "release", "develop" ]
+    # Publish semver tags as releases.
+    tags: [ 'v*.*.*' ] 
+  pull_request:
+    branches: [ "release", "develop" ]
+
+jobs:
+  recommended_builds:
+    uses: ./.github/workflows/docker-publish.yml
+    strategy:
+      matrix:
+        # TODO: Periodically check https://gazebosim.org/docs/latest/ros_installation/#summary-of-compatible-ros-and-gazebo-combinations and update non-EOL recommended combinations
+        include:
+          - ubuntu_distro: jammy
+            ros_distro: iron
+            gz_version: fortress
+            websocket_gzlaunch_file: websocket.ign
+          - ubuntu_distro: jammy
+            ros_distro: humble
+            gz_version: fortress
+            websocket_gzlaunch_file: websocket.ign
+          - ubuntu_distro: noble
+            ros_distro: jazzy
+            gz_version: harmonic
+            websocket_gzlaunch_file: websocket.gzlaunch
+          - ubuntu_distro: noble
+            ros_distro: rolling
+            gz_version: ionic
+            websocket_gzlaunch_file: websocket.gzlaunch
+    with: 
+      ubuntu_distro: ${{ matrix.ubuntu_distro }}
+      ros_distro: ${{ matrix.ros_distro }}
+      gz_version: ${{ matrix.gz_version }}
+      websocket_gzlaunch_file: ${{ matrix.websocket.gzlaunch_file }}
