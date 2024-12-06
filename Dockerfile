@@ -26,8 +26,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 # update base system
 RUN apt-get update && apt-get upgrade -y --no-install-recommends
 
+# TODO: Remove -m if `ros-rolling-slam-toolbox` is available in ROS index
 # install ros2 packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y -m --no-install-recommends \
 	libusb-1.0-0-dev \
 	python3-colcon-devtools \
 	python3-colcon-package-selection \
