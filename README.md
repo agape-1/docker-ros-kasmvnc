@@ -22,7 +22,7 @@ If you have Docker Nvidia support, run this command instead:
 docker compose up gz_sim_nvidia
 ```
 
-Visit http://loclahost:3000 or `http://localhost:$VNC_PORT` to access the Gazebo GUI.
+Visit http://localhost:3000 or `http://localhost:$VNC_PORT` to access the Gazebo GUI.
 
 This simulation also supports Gazebo's [visualization](https://app.gazebosim.org/visualization) tool. Access the tool and enter ws://localhost:9002 or `ws://localhost:$WEBSOCKET_PORT` and press 'Connect'.
 
@@ -53,9 +53,10 @@ to rerun the container with the updated configuration. Adjust as necessary simil
 
 | Variable Name              | Default Value               | Description                                                              |
 |----------------------------|-----------------------------|--------------------------------------------------------------------------|
+| `UBUNTU_DISTRO`            | `jammy`                   | Specifies the underlying Ubuntu base distribution to use.          |
 | `ROS_DISTRO`               | `humble`                   | Specifies the ROS (Robot Operating System) distribution to use.          |
 | `GZ_VERSION`               | `garden`                   | Defines the version of Gazebo to use.                                    |
-| `WEBOSCKET_GZLAUNCH_FILE`  | `websocket.gzlaunch`       | Specifies the Gazebo launch file for WebSocket configuration. Unless you need to configure gz launch, this can be safely ignored.           |
+| `WEBSOCKET_GZLAUNCH_FILE`  | `websocket.gzlaunch`       | Specifies the Gazebo/IGN launch file for WebSocket configuration. Unless you need to configure gz launch, this can be safely ignored.           |
 | `GZ_SIM_OPTIONS`           | (empty)                    | Options for customizing Gazebo simulator options at runtime, identical to `gz sim $GZ_SIM_OPTIONS`. Empty by default.     |
 | `WEBSOCKET_PORT`           | `9002`                     | Port number used for Gazebo's [visualization](https://app.gazebosim.org/visualization) tool.                               |
 | `VNC_PORT`                 | `3000`                     | Port number used to access the Gazebo GUI via the browser.         |

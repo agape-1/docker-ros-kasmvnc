@@ -6,8 +6,10 @@ services:
       context: ./
       dockerfile: ./Dockerfile
       args:
+        UBUNTU_DISTRO: ${UBUNTU_DISTRO}
         ROS_DISTRO: ${ROS_DISTRO}
         GZ_VERSION: ${GZ_VERSION}
+        WEBSOCKET_GZLAUNCH_FILE: ${WEBSOCKET_GZLAUNCH_FILE}
     ports: &ports
       - ${VNC_PORT}:3000
       - ${WEBSOCKET_PORT}:${WEBSOCKET_PORT}
