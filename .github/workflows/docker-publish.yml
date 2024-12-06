@@ -33,6 +33,7 @@ on:
           - jazzy
           - iron
           - humble
+          - rolling
       gz_version:
         description: 'Defines the version of Gazebo to use.'
         default: 'garden'
