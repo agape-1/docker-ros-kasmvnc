@@ -1,4 +1,5 @@
-name: Default Build Configurations
+name: Recommended Build Configuration
+run-name: ${{ github.event_name }} build for ${{ github.ref }}
 
 on:
   schedule:
