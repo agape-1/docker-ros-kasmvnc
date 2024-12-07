@@ -1,5 +1,5 @@
 name: Recommended Build Configuration
-run-name: ${{ github.event_name }} build for ${{ github.ref }}
+run-name: ${{ github.event_name }} build (and publish if pushed to release) for ${{ github.ref }}
 
 on:
   schedule:
