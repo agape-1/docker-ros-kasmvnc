@@ -29,7 +29,7 @@ RUN apt-get update && apt-get upgrade -y --no-install-recommends
 # TODO: Remove and replace `$SLAM_TOOLBOX_PKG` with `ros-${ROS_DISTRO}-slam-toolbox` once `ros-rolling-slam-toolbox` is available in ROS index.
 # Defaults to latest available slam-toolbox (jazzy) in ROS repository
 # install ros2 packages
-RUN export SLAM_TOOLBOX_PKG=$([ '${ROS_DISTRO}' != 'rolling' ] && echo ros-${ROS_DISTRO}-slam-toolbox || echo ros-jazzy-slam-toolbox) && \
+RUN export SLAM_TOOLBOX_PKG=$([ "${ROS_DISTRO}" != "rolling" ] && echo ros-${ROS_DISTRO}-slam-toolbox || echo ros-jazzy-slam-toolbox) && \
 apt-get update && apt-get install -y --no-install-recommends \
 	libusb-1.0-0-dev \
 	python3-colcon-devtools \
