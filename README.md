@@ -29,7 +29,7 @@ docker run \
 If you have Docker Nvidia support, run this command instead:
 
 ```bash
-docker run
+docker run \
   -p 3000:3000 \
   -p 9002:9002 \
   --security-opt seccomp:unconfined \
