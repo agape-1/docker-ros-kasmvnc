@@ -49,6 +49,8 @@ docker run
   ghcr.io/agape-1/docker-ros2-kasmvnc:jazzy-harmonic
 ```
 
+Replace `jazzy` and `harmonic` with the ROS distrubiton and Gazebo version of choice, respectively. See [supported versions](#supported-versions) for more details.
+
 #### Local Build
 Clone the repository and run the following command:
 
@@ -64,6 +66,7 @@ If you have Docker Nvidia support, run this command instead:
 docker compose up gz_sim_nvidia
 ```
 
+### Accessing Gazebo 
 Visit http://localhost:3000 or `http://localhost:$VNC_PORT` to access the Gazebo GUI.
 
 This simulation also supports Gazebo's [visualization](https://app.gazebosim.org/visualization) tool. Access the tool and enter ws://localhost:9002 or `ws://localhost:$WEBSOCKET_PORT` and press 'Connect'.
@@ -77,6 +80,18 @@ This simulation also supports Gazebo's [visualization](https://app.gazebosim.org
 * By default, the docker container exposes the network across `0.0.0.0`, which allows other clients to access your simulation from their browser. To add authentication, supply a `CUSTOM_USER` and `CUSTOM_PASSWORD` variables to `.env` and update the container from the [configuration](#configuration) section.
 
 * Additional VNC [options](https://github.com/linuxserver/docker-baseimage-kasmvnc?tab=readme-ov-file#options) are available.
+
+### Supported Versions
+
+All currnet non-EOL ROS [versions](https://docs.ros.org/en/rolling/Releases.html) are supported with the recommended Gazebo [releases]([https://gazebosim.org/docs/latest/ros_installation/](https://gazebosim.org/docs/latest/ros_installation/#summary-of-compatible-ros-and-gazebo-combinations)).
+
+The supported builds are always viewable from the following github [workflow](https://github.com/agape-1/docker-ros2-kasmvnc/blob/release/.github/workflows/default-build.yml):
+
+* docker-ros2-kasmvnc:jazzy-harmonic
+* docker-ros2-kasmvnc:humble-fortress
+* docker-ros2-kasmvnc:iron-fortress
+* docker-ros2-kasmvnc:rolling-ionic
+
 
 ### Configuration
 
