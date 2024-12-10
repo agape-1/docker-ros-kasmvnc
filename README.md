@@ -8,6 +8,48 @@ Run ROS2 and Gazebo using [KasmVNC](https://github.com/linuxserver/docker-baseim
 
 ### Getting started
 
+#### Docker CLI
+
+```bash
+docker run \
+  -p 3000:3000 \
+  -p 9002:9002 \
+  --security-opt seccomp:unconfined \
+  --shm-size 512m \
+  -e PYTHONUNBUFFERED=1 \
+  -e XDG_RUNTIME_DIR \
+  -e PUID=1000 \ 
+  -e PGID=1000 \ 
+  -e VNC_PORT=3000 \
+  -e WEBSOCKET_PORT=9002 \
+  ghcr.io/agape-1/docker-ros2-kasmvnc:jazzy-harmonic
+```
+
+##### Nvidia GPUs
+If you have Docker Nvidia support, run this command instead:
+
+```bash
+docker run
+  -p 3000:3000 \
+  -p 9002:9002 \
+  --security-opt seccomp:unconfined \
+  --shm-size 512m \
+  -e PYTHONUNBUFFERED=1 \
+  -e XDG_RUNTIME_DIR \
+  -e PUID=1000 \ 
+  -e PGID=1000 \ 
+  -e VNC_PORT=3000 \
+  -e WEBSOCKET_PORT=9002 \
+  -e NVIDIA_VISIBLE_DEVICES=all \
+  -e NVIDIA_DRIVER_CAPABILITIES=all \
+  -e __NV_PRIME_RENDER_OFFLOAD=1 \
+  -e __GLX_VENDOR_LIBRARY_NAME=nvidia \
+  --runtime nvidia \ 
+  --gpus 1 \
+  ghcr.io/agape-1/docker-ros2-kasmvnc:jazzy-harmonic
+```
+
+#### Local Build
 Clone the repository and run the following command:
 
 
@@ -15,7 +57,7 @@ Clone the repository and run the following command:
 docker compose up gz_sim
 ```
 
-#### Nvidia GPUs
+##### Nvidia GPUs
 If you have Docker Nvidia support, run this command instead:
 
 ```bash
