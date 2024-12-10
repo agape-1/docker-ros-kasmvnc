@@ -83,7 +83,7 @@ This simulation also supports Gazebo's [visualization](https://app.gazebosim.org
 
 ### Supported Versions
 
-All currnet non-EOL ROS [versions](https://docs.ros.org/en/rolling/Releases.html) are supported with the recommended Gazebo [releases]([https://gazebosim.org/docs/latest/ros_installation/](https://gazebosim.org/docs/latest/ros_installation/#summary-of-compatible-ros-and-gazebo-combinations)).
+All currnet non-EOL ROS [versions](https://docs.ros.org/en/rolling/Releases.html) are supported with the recommended Gazebo [releases](https://gazebosim.org/docs/latest/ros_installation/#summary-of-compatible-ros-and-gazebo-combinations).
 
 The supported builds are always viewable from the following github [workflow](https://github.com/agape-1/docker-ros2-kasmvnc/blob/release/.github/workflows/default-build.yml):
 
