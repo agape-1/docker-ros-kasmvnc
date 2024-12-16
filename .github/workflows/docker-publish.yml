@@ -1,0 +1,172 @@
+name: Docker Publish
+run-name: Build ${{ inputs.ros_distro }}-${{ inputs.gz_version }}-${{ inputs.platform }} with Ubuntu ${{ inputs.ubuntu_distro }}
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+  workflow_call:
+    inputs:
+      ubuntu_distro:
+        description: 'Specifies the underlying Ubuntu base distribution to use.'
+        default: 'jammy'
+        required: false
+        type: string
+      ros_distro:
+        description: 'Specifies the ROS (Robot Operating System) distribution to use.'
+        default: 'humble'
+        required: false
+        type: string
+      gz_version:
+        description: 'Defines the version of Gazebo to use.'
+        default: 'garden'
+        required: false
+        type: string
+      websocket_gzlaunch_file:
+        description: 'Specifies the Gazebo launch file for WebSocket configuration. Unless you need to configure gz launch, this can be safely ignored.'
+        default: 'websocket.gzlaunch'
+        required: false
+        type: string
+      platform:
+        description: 'A single [target platform](https://docs.docker.com/engine/reference/commandline/buildx_build/#platform) for build. Use matrixes to handle multi-platform runs. Do not attempt multi-platform runs for one single job to ensure cache usage.'
+        default: 'linux/amd64'
+        type: string
+  workflow_dispatch:
+    inputs:
+      ubuntu_distro:
+        description: 'Specifies the underlying Ubuntu base distribution to use.'
+        default: 'jammy'
+        required: false
+        type: choice
+        options:
+          - jammy
+          - noble
+      ros_distro:
+        description: 'Specifies the ROS (Robot Operating System) distribution to use.'
+        default: 'humble'
+        required: false
+        type: choice
+        options:
+          - jazzy
+          - iron
+          - humble
+          - rolling
+      gz_version:
+        description: 'Defines the version of Gazebo to use.'
+        default: 'garden'
+        required: false
+        type: choice
+        options:
+          - jetty
+          - ionic
+          - harmonic
+          - garden
+          - fortress
+          - citadel
+      websocket_gzlaunch_file:
+        description: 'Specifies the Gazebo launch file for WebSocket configuration. Unless you need to configure gz launch, this can be safely ignored.'
+        default: 'websocket.gzlaunch'
+        required: false
+        type: string
+      platform:
+        description: 'A [target platform](https://docs.docker.com/engine/reference/commandline/buildx_build/#platform) for build'
+        default: 'linux/amd64'
+        type: choice
+        options:
+          - linux/amd64
+          - linux/arm64
+        required: false
+  
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}
+  # From https://stackoverflow.com/a/71158878
+  BRANCH: ${{ github.head_ref || github.ref_name }} 
+
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Install the cosign tool if pushed to release branch
+      # https://github.com/sigstore/cosign-installer
+      - name: Install cosign
+        if: ${{ github.event_name == 'push' && env.BRANCH == 'release' }}
+        uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 #v3.5.0
+        with:
+          cosign-release: 'v2.2.4'
+
+      # Set up BuildKit Docker container builder to be able to build
+      # multi-platform images and export cache
+      # https://github.com/docker/setup-buildx-action
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
+
+      # Login against a Docker registry if pushed to release branch
+      # https://github.com/docker/login-action
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: ${{ github.event_name == 'push' && env.BRANCH == 'release' }}
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      # Build and push Docker image with Buildx (Only push on release branch)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
+        with:
+          context: .
+          push: ${{ github.event_name == 'push' && env.BRANCH == 'release' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ inputs.ubuntu_distro }}-${{ inputs.platform }} # From https://github.com/docker/build-push-action/issues/286#issuecomment-893253003
+          cache-to: type=gha,mode=max,scope=${{ inputs.ubuntu_distro }}-${{ inputs.platform }}
+          platforms: ${{ inputs.platform }}
+          build-args: |
+            UBUNTU_DISTRO=${{ inputs.ubuntu_distro }}
+            ROS_DISTRO=${{ inputs.ros_distro }}
+            GZ_VERSION=${{ inputs.gz_version }} 
+            WEBSOCKET_GZLAUNCH_FILE=${{ inputs.websocket_gzlaunch_file }}
+          
+
+      # Sign the resulting Docker image digest if pushed to release branch
+      # This will only write to the public Rekor transparency log when the Docker
+      # repository is public to avoid leaking data.  If you would like to publish
+      # transparency data even for private images, pass --force to cosign below.
+      # https://github.com/sigstore/cosign
+      - name: Sign the published Docker image
+        if: ${{ github.event_name == 'push' && env.BRANCH == 'release' }}
+        env:
+          # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
+          TAGS: ${{ steps.meta.outputs.tags }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+        # This step uses the identity token to provision an ephemeral certificate
+        # against the sigstore community Fulcio instance.
+        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}

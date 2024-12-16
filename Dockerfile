@@ -26,8 +26,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 # update base system
 RUN apt-get update && apt-get upgrade -y --no-install-recommends
 
+# TODO: Remove and replace `$SLAM_TOOLBOX_PKG` with `ros-${ROS_DISTRO}-slam-toolbox` once `ros-rolling-slam-toolbox` is available in ROS index.
+# Defaults to latest available slam-toolbox (jazzy) in ROS repository
 # install ros2 packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN export SLAM_TOOLBOX_PKG=$([ "${ROS_DISTRO}" != "rolling" ] && echo ros-${ROS_DISTRO}-slam-toolbox || echo ros-jazzy-slam-toolbox) && \
+apt-get update && apt-get install -y --no-install-recommends \
 	libusb-1.0-0-dev \
 	python3-colcon-devtools \
 	python3-colcon-package-selection \
@@ -43,7 +46,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	ros-${ROS_DISTRO}-ros2-controllers \
 	ros-${ROS_DISTRO}-ros2launch \
 	ros-${ROS_DISTRO}-rplidar-ros \
-	ros-${ROS_DISTRO}-slam-toolbox \
+ 	$SLAM_TOOLBOX_PKG  \ 
 	ros-${ROS_DISTRO}-teleop-twist-keyboard \
 	ros-${ROS_DISTRO}-xacro \
 	&& rm -rf /var/lib/apt/lists/*
@@ -92,13 +95,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ARG ENTRYPOINT=docker-entrypoint.sh
 # Fix: Allow `${ENTRYPOINT}` var accessible in `ENTRYPOINT` layer
-ENV ENTRYPOINT $ENTRYPOINT
+ENV ENTRYPOINT=$ENTRYPOINT
 ARG WEBSOCKET_GZLAUNCH_FILE=websocket.gzlaunch
-ENV GZ_SIM_OPTIONS -s --headless-rendering
-ENV WEBSOCKET_PORT 9002
-ENV PUID 1000
-ENV GUID 1000
-ENV WEBSOCKET_GZLAUNCH_PATH /${WEBSOCKET_GZLAUNCH_FILE}
+ENV GZ_SIM_OPTIONS="-s --headless-rendering"
+ENV WEBSOCKET_PORT=9002
+ENV PUID=1000
+ENV GUID=1000
+ENV WEBSOCKET_GZLAUNCH_PATH=/${WEBSOCKET_GZLAUNCH_FILE}
 
 COPY ${ENTRYPOINT} /
 

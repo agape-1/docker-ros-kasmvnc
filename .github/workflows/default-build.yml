@@ -1,0 +1,47 @@
+name: Recommended Build Configuration
+run-name: ${{ github.event_name }} build (and publish if pushed to release) for ${{ github.ref }}
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Automatic nightly builds - most rebuilds will be cached unless an update happens upstream - typically from ROS Rolling
+  push:
+    branches: [ "release", "develop" ]
+    # Publish semver tags as releases.
+    tags: [ 'v*.*.*' ] 
+  pull_request:
+    branches: [ "release", "develop" ]
+
+jobs:
+  recommended_builds:
+    permissions: # TODO: Always ensure permissions match `/.github/workflows/docker-publish.yml`
+      contents: read
+      packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
+    uses: ./.github/workflows/docker-publish.yml
+    strategy:
+      matrix:
+        # TODO: Periodically check https://gazebosim.org/docs/latest/ros_installation/#summary-of-compatible-ros-and-gazebo-combinations and update non-EOL recommended combinations
+        include:
+          - ubuntu_distro: jammy
+            ros_distro: iron
+            gz_version: fortress
+            websocket_gzlaunch_file: websocket.ign
+          - ubuntu_distro: jammy
+            ros_distro: humble
+            gz_version: fortress
+            websocket_gzlaunch_file: websocket.ign
+          - ubuntu_distro: noble
+            ros_distro: jazzy
+            gz_version: harmonic
+            websocket_gzlaunch_file: websocket.gzlaunch
+          - ubuntu_distro: noble
+            ros_distro: rolling
+            gz_version: ionic
+            websocket_gzlaunch_file: websocket.gzlaunch
+    with: 
+      ubuntu_distro: ${{ matrix.ubuntu_distro }}
+      ros_distro: ${{ matrix.ros_distro }}
+      gz_version: ${{ matrix.gz_version }}
+      websocket_gzlaunch_file: ${{ matrix.websocket.gzlaunch_file }}
