@@ -25,9 +25,41 @@ docker run \
   ghcr.io/agape-1/docker-ros2-kasmvnc:jazzy-harmonic
 ```
 
-### Nvidia GPUs
-If you have Docker Nvidia support, run this command instead:
 
+Replace `jazzy` and `harmonic` with the ROS distrubiton and Gazebo version of choice, respectively. See [supported versions](#supported-versions) for more details.
+
+### Compose File
+
+```
+services:
+    docker-ros2-kasmvnc:
+        ports:
+            - 3000:3000
+            - 9002:9002
+        security_opt:
+            - seccomp:unconfined
+        shm_size: 512m
+        environment:
+            - PYTHONUNBUFFERED=1
+            - XDG_RUNTIME_DIR
+            - PUID=1000
+            - PGID=1000
+            - VNC_PORT=3000
+            - WEBSOCKET_PORT=9002
+        image: ghcr.io/agape-1/docker-ros2-kasmvnc:jazzy-harmonic
+```
+
+### Local Build
+Clone the repository and run the following command:
+```bash
+docker compose up gz_sim
+```
+
+### Nvidia GPUs
+If you have Docker Nvidia support, use the following commands instead:
+
+
+#### Docker CLI
 ```bash
 docker run \
   -p 3000:3000 \
@@ -49,18 +81,41 @@ docker run \
   ghcr.io/agape-1/docker-ros2-kasmvnc:jazzy-harmonic
 ```
 
-Replace `jazzy` and `harmonic` with the ROS distrubiton and Gazebo version of choice, respectively. See [supported versions](#supported-versions) for more details.
+#### Compose File
 
-### Local Build
-Clone the repository and run the following command:
-
-
-```bash
-docker compose up gz_sim
+```
+services:
+    docker-ros2-kasmvnc:
+        ports:
+            - 3000:3000
+            - 9002:9002
+        security_opt:
+            - seccomp:unconfined
+        shm_size: 512m
+        environment:
+            - PYTHONUNBUFFERED=1
+            - XDG_RUNTIME_DIR
+            - PUID=1000
+            - PGID=1000
+            - VNC_PORT=3000
+            - WEBSOCKET_PORT=9002
+            - NVIDIA_VISIBLE_DEVICES=all
+            - NVIDIA_DRIVER_CAPABILITIES=all
+            - __NV_PRIME_RENDER_OFFLOAD=1
+            - __GLX_VENDOR_LIBRARY_NAME=nvidia
+        runtime: nvidia
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          count: 1
+                          capabilities:
+                              - gpu
+        image: ghcr.io/agape-1/docker-ros2-kasmvnc:jazzy-harmonic
 ```
 
-### Nvidia GPUs
-If you have Docker Nvidia support, run this command instead:
+#### Local Build
 
 ```bash
 docker compose up gz_sim_nvidia
