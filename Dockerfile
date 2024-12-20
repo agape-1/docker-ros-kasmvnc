@@ -1,5 +1,6 @@
 # Modified from https://github.com/brean/gz-sim-docker/blob/main/Dockerfile https://github.com/UNF-Robotics/docker-ros2-jazzy/blob/master/Dockerfile https://github.com/Tiryoh/docker-ros2-desktop-vnc/blob/master/humble/Dockerfile
-FROM ghcr.io/linuxserver/baseimage-kasmvnc:ubuntujammy
+ARG UBUNTU_DISTRO=jammy
+FROM ghcr.io/linuxserver/baseimage-kasmvnc:ubuntu${UBUNTU_DISTRO}
 ARG ROS_DISTRO=humble
 
 RUN apt-get update -q && \
@@ -25,8 +26,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 # update base system
 RUN apt-get update && apt-get upgrade -y --no-install-recommends
 
+# TODO: Remove and replace `$SLAM_TOOLBOX_PKG` with `ros-${ROS_DISTRO}-slam-toolbox` once `ros-rolling-slam-toolbox` is available in ROS index.
+# Defaults to latest available slam-toolbox (jazzy) in ROS repository
 # install ros2 packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN export SLAM_TOOLBOX_PKG=$([ "${ROS_DISTRO}" != "rolling" ] && echo ros-${ROS_DISTRO}-slam-toolbox || echo ros-jazzy-slam-toolbox) && \
+apt-get update && apt-get install -y --no-install-recommends \
 	libusb-1.0-0-dev \
 	python3-colcon-devtools \
 	python3-colcon-package-selection \
@@ -42,15 +46,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	ros-${ROS_DISTRO}-ros2-controllers \
 	ros-${ROS_DISTRO}-ros2launch \
 	ros-${ROS_DISTRO}-rplidar-ros \
-	ros-${ROS_DISTRO}-slam-toolbox \
+ 	$SLAM_TOOLBOX_PKG  \ 
 	ros-${ROS_DISTRO}-teleop-twist-keyboard \
 	ros-${ROS_DISTRO}-xacro \
-	&& rm -rf /var/lib/apt/lists/*
-
-# install packages for dynamic websocket configuration and Windows compatibility helper
-RUN apt-get update && apt-get install -y --no-install-recommends \
-	xmlstarlet \
-	dos2unix \ 
 	&& rm -rf /var/lib/apt/lists/*
 
 # ros 2 env
@@ -85,15 +83,25 @@ RUN mkdir -p ${COLCON_WS_SRC}\
     && . /opt/ros/${ROS_DISTRO}/setup.sh\
     && colcon build
 
+# install packages for the following:
+# dynamic websocket configuration
+# Windows compatibility helper
+# py-XDG fix: https://github.com/gfjardim/docker-containers/issues/51
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	xmlstarlet \
+	dos2unix \
+	python3-xdg \
+	&& rm -rf /var/lib/apt/lists/*
+
 ARG ENTRYPOINT=docker-entrypoint.sh
 # Fix: Allow `${ENTRYPOINT}` var accessible in `ENTRYPOINT` layer
-ENV ENTRYPOINT $ENTRYPOINT
-ENV WEBSOCKET_GZLAUNCH_FILE websocket.gzlaunch
-ENV GZ_SIM_OPTIONS -s --headless-rendering
-ENV WEBSOCKET_PORT 9002
-ENV PUID 1000
-ENV GUID 1000
-ENV WEBSOCKET_GZLAUNCH_PATH /${WEBSOCKET_GZLAUNCH_FILE}
+ENV ENTRYPOINT=$ENTRYPOINT
+ARG WEBSOCKET_GZLAUNCH_FILE=websocket.gzlaunch
+ENV GZ_SIM_OPTIONS="-s --headless-rendering"
+ENV WEBSOCKET_PORT=9002
+ENV PUID=1000
+ENV GUID=1000
+ENV WEBSOCKET_GZLAUNCH_PATH=/${WEBSOCKET_GZLAUNCH_FILE}
 
 COPY ${ENTRYPOINT} /
 
