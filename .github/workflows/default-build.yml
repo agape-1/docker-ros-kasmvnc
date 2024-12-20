@@ -21,6 +21,7 @@ jobs:
       id-token: write
     uses: ./.github/workflows/docker-publish.yml
     strategy:
+      fail-fast: false
       matrix:
         # TODO: Periodically check https://gazebosim.org/docs/latest/ros_installation/#summary-of-compatible-ros-and-gazebo-combinations and update non-EOL recommended combinations
         include:
