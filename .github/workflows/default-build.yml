@@ -23,6 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        platforms: ['linux/amd64', 'linux/arm64']
         # TODO: Periodically check https://gazebosim.org/docs/latest/ros_installation/#summary-of-compatible-ros-and-gazebo-combinations and update non-EOL recommended combinations
         include:
           - ubuntu_distro: jammy
@@ -46,3 +47,4 @@ jobs:
       ros_distro: ${{ matrix.ros_distro }}
       gz_version: ${{ matrix.gz_version }}
       websocket_gzlaunch_file: ${{ matrix.websocket_gzlaunch_file }}
+      platform: ${{ matrix.platforms }}
