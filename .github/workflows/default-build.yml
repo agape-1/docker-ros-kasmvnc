@@ -25,24 +25,50 @@ jobs:
       matrix:
         # TODO: Periodically check https://gazebosim.org/docs/latest/ros_installation/#summary-of-compatible-ros-and-gazebo-combinations and update non-EOL recommended combinations
         include:
-          - ubuntu_distro: jammy
+          - platform: linux/amd64
+            ubuntu_distro: jammy
             ros_distro: iron
             gz_version: fortress
             websocket_gzlaunch_file: websocket.ign
-          - ubuntu_distro: jammy
+          - platform: linux/arm64
+            ubuntu_distro: jammy
+            ros_distro: iron
+            gz_version: fortress
+            websocket_gzlaunch_file: websocket.ign
+          - platform: linux/amd64
+            ubuntu_distro: jammy
             ros_distro: humble
             gz_version: fortress
             websocket_gzlaunch_file: websocket.ign
-          - ubuntu_distro: noble
+          - platform: linux/arm64
+            ubuntu_distro: jammy
+            ros_distro: humble
+            gz_version: fortress
+            websocket_gzlaunch_file: websocket.ign
+          - platform: linux/amd64
+            ubuntu_distro: noble
             ros_distro: jazzy
             gz_version: harmonic
             websocket_gzlaunch_file: websocket.gzlaunch
-          - ubuntu_distro: noble
+          - platform: linux/arm64
+            ubuntu_distro: noble
+            ros_distro: jazzy
+            gz_version: harmonic
+            websocket_gzlaunch_file: websocket.gzlaunch
+          - platform: linux/amd64
+            ubuntu_distro: noble
             ros_distro: rolling
             gz_version: ionic
             websocket_gzlaunch_file: websocket.gzlaunch
+          - platform: linux/arm64
+            ubuntu_distro: noble
+            ros_distro: rolling
+            gz_version: ionic
+            websocket_gzlaunch_file: websocket.gzlaunch
+  
     with: 
       ubuntu_distro: ${{ matrix.ubuntu_distro }}
       ros_distro: ${{ matrix.ros_distro }}
       gz_version: ${{ matrix.gz_version }}
-      websocket_gzlaunch_file: ${{ matrix.websocket.gzlaunch_file }}
+      websocket_gzlaunch_file: ${{ matrix.websocket_gzlaunch_file }}
+      platform: ${{ matrix.platforms }}
