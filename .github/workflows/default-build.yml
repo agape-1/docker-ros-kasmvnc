@@ -71,4 +71,4 @@ jobs:
       ros_distro: ${{ matrix.ros_distro }}
       gz_version: ${{ matrix.gz_version }}
       websocket_gzlaunch_file: ${{ matrix.websocket_gzlaunch_file }}
-      platform: ${{ matrix.platforms }}
+      platform: ${{ matrix.platform }}
