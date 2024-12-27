@@ -18,8 +18,8 @@ docker run \
   --shm-size 512m \
   -e PYTHONUNBUFFERED=1 \
   -e XDG_RUNTIME_DIR \
-  -e PUID=1000 \ 
-  -e PGID=1000 \ 
+  -e PUID=1000 \
+  -e PGID=1000 \
   -e VNC_PORT=3000 \
   -e WEBSOCKET_PORT=9002 \
   ghcr.io/agape-1/docker-ros2-kasmvnc:jazzy-harmonic
@@ -68,15 +68,15 @@ docker run \
   --shm-size 512m \
   -e PYTHONUNBUFFERED=1 \
   -e XDG_RUNTIME_DIR \
-  -e PUID=1000 \ 
-  -e PGID=1000 \ 
+  -e PUID=1000 \
+  -e PGID=1000 \
   -e VNC_PORT=3000 \
   -e WEBSOCKET_PORT=9002 \
   -e NVIDIA_VISIBLE_DEVICES=all \
   -e NVIDIA_DRIVER_CAPABILITIES=all \
   -e __NV_PRIME_RENDER_OFFLOAD=1 \
   -e __GLX_VENDOR_LIBRARY_NAME=nvidia \
-  --runtime nvidia \ 
+  --runtime nvidia \
   --gpus 1 \
   ghcr.io/agape-1/docker-ros2-kasmvnc:jazzy-harmonic
 ```
